@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejsdemo
+  labels:
+    app: nodejsdemo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejsdemo
+  template:
+    metadata:
+      labels:
+        app: nodejsdemo
+    spec:
+      imagePullSecrets:
+      - name: fraocirsecret
+      containers:
+      - name: nodejsdemo
+        imagePullPolicy: Always
+        image: fra.ocir.io/NAMESPACE/nodejsdemo:TAG
+        ports:
+        - containerPort: 3000
