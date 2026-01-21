@@ -34,6 +34,7 @@ steps:
   displayName: 'get OCIR token'
     # Create OCIR auth short-lived token
     # This example uses OCIR in FRA region (replace in necessary)
+    # podman login can also be done permanently on the agent VM, so this step is optional (just for demonstration)
 
 - script: |
     podman build -t 'fra.ocir.io/$(NAMESPACE)/nodejsdemo:latest' .
