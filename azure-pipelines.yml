@@ -19,29 +19,27 @@ steps:
     npm install
   displayName: 'npm install'
 
+#- script: |
+#    sed -i "s/NAMESPACE/$(NAMESPACE)/g" nodejsdemo.yaml
+#    sed -i "s/TAG/latest/g" nodejsdemo.yaml
+#  displayName: 'Setup OKE yaml NAMESPACE and IMAGE TAG'
+
 - bash: |
-    NAMESPACE_VAL=$(oci os ns get | jq -r .data)
+    NAMESPACE_VAL=$(oci os ns get --auth=instance_principal | jq -r .data)
     echo "##vso[task.setvariable variable=NAMESPACE]$NAMESPACE_VAL"
   displayName: 'Get and Set OCI Namespace'
-
-- script: |
-    sed -i "s/NAMESPACE/$(NAMESPACE)/g" nodejsdemo.yaml
-    sed -i "s/TAG/latest/g" nodejsdemo.yaml
-  displayName: 'Setup OKE yaml NAMESPACE and IMAGE TAG'
   
-- script: |
-    oci raw-request --region eu-frankfurt-1 --http-method GET --target-uri 'https://fra.ocir.io/20180419/docker/token' | jq -r .data.token | podman login -u BEARER_TOKEN --password-stdin fra.ocir.io
-  displayName: 'get OCIR token'
-    # Create OCIR auth short-lived token using cli IAM user
-    # This example uses OCIR in FRA region (replace in necessary)
-    # podman login can also be done permanently on the agent VM, so this step is optional (just for demonstration)
+#- script: |
+#    oci raw-request --region eu-frankfurt-1 --http-method GET --target-uri 'https://fra.ocir.io/20180419/docker/token' | jq -r .data.token | podman login -u BEARER_TOKEN --password-stdin fra.ocir.io
+#  displayName: 'get OCIR token'
+#    # Create OCIR auth short-lived token
+#    # This example uses OCIR in FRA region (replace in necessary)
 
 - script: |
-    oci raw-request --region eu-frankfurt-1 --http-method GET --target-uri 'https://fra.ocir.io/20180419/docker/token' --auth=instance_principal  | jq -r .data.token | podman login -u BEARER_TOKEN --password-stdin fra.ocir.io
+    oci raw-request --region eu-frankfurt-1 --http-method GET --target-uri 'https://fra.ocir.io/20180419/docker/token' --auth=instance_principal | jq -r .data.token | podman login -u BEARER_TOKEN --password-stdin fra.ocir.io
   displayName: 'get OCIR token'
-    # Create OCIR auth short-lived token using instance-principal
+    # Create OCIR auth short-lived token
     # This example uses OCIR in FRA region (replace in necessary)
-    # podman login can also be done permanently on the agent VM, so this step is optional (just for demonstration)
 
 - script: |
     podman build -t 'fra.ocir.io/$(NAMESPACE)/nodejsdemo:latest' .
