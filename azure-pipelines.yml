@@ -1,4 +1,4 @@
-# Node.js
+§§§§§§§# Node.js
 # Build a general Node.js project with npm.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
@@ -30,9 +30,16 @@ steps:
   displayName: 'Setup OKE yaml NAMESPACE and IMAGE TAG'
   
 - script: |
+    oci raw-request --region eu-frankfurt-1 --http-method GET --target-uri 'https://fra.ocir.io/20180419/docker/token' | jq -r .data.token | podman login -u BEARER_TOKEN --password-stdin fra.ocir.io
+  displayName: 'get OCIR token'
+    # Create OCIR auth short-lived token using cli IAM user
+    # This example uses OCIR in FRA region (replace in necessary)
+    # podman login can also be done permanently on the agent VM, so this step is optional (just for demonstration)
+
+- script: |
     oci raw-request --region eu-frankfurt-1 --http-method GET --target-uri 'https://fra.ocir.io/20180419/docker/token' --auth=instance_principal  | jq -r .data.token | podman login -u BEARER_TOKEN --password-stdin fra.ocir.io
   displayName: 'get OCIR token'
-    # Create OCIR auth short-lived token
+    # Create OCIR auth short-lived token using instance-principal
     # This example uses OCIR in FRA region (replace in necessary)
     # podman login can also be done permanently on the agent VM, so this step is optional (just for demonstration)
 
