@@ -49,6 +49,6 @@ steps:
   displayName: 'build and push to OCIR'
 
 - script: |
-    kubectl delete deployment nodejsdemo
+    kubectl delete deployment nodejsdemo --ignore-not-found=true
     kubectl create -f nodejsdemo.yaml
   displayName: 'redeploy to OKE'
