@@ -20,7 +20,7 @@ steps:
   displayName: 'npm install'
 
 #- bash: |
-#    NAMESPACE_VAL=$(oci os ns get --auth=instance_principal | jq -r .data)
+#    NAMESPACE_VAL=$(oci os ns get | jq -r .data)
 #    echo "##vso[task.setvariable variable=NAMESPACE]$NAMESPACE_VAL"
 #  displayName: 'Get and Set OCI Namespace'
 
